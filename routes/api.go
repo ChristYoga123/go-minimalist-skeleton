@@ -1,8 +1,9 @@
 package routes
 
 import (
+	"go-skeleton/app/http/controllers"
+
 	"github.com/gofiber/fiber/v2"
-	"user-service/app/http/controllers"
 )
 
 func SetupApiRoutes(app *fiber.App) {

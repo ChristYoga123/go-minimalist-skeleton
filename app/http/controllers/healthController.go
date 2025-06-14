@@ -1,9 +1,10 @@
 package controllers
 
 import (
+	"go-skeleton/app/services"
+	"go-skeleton/utils"
+
 	"github.com/gofiber/fiber/v2"
-	"user-service/app/services"
-	"user-service/utils"
 )
 
 // HealthControllerStruct handles incoming HTTP requests for the health check endpoint.

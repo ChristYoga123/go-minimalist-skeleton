@@ -1,4 +1,4 @@
-module user-service
+module go-skeleton
 
 go 1.24.3
 

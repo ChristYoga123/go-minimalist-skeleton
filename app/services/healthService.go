@@ -1,6 +1,8 @@
 package services
 
-import "user-service/app/repositories"
+import (
+	"go-skeleton/app/repositories"
+)
 
 // HealthServiceInterface defines the interface for health check business logic.
 // This decouples the controller from the concrete service implementation.

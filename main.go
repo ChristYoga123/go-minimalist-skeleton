@@ -1,13 +1,14 @@
 package main
 
 import (
-	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/middleware/logger"
+	"go-skeleton/configs"
+	"go-skeleton/routes"
+	_ "go-skeleton/utils"
 	"log"
 	"os"
-	"user-service/configs"
-	"user-service/routes"
-	_ "user-service/utils"
+
+	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/logger"
 )
 
 func main() {

@@ -1,8 +1,9 @@
 package repositories
 
 import (
+	"go-skeleton/configs"
+
 	"gorm.io/gorm"
-	"user-service/configs"
 )
 
 // HealthRepositoryInterface defines the interface for health check operations.
