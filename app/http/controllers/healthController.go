@@ -1,53 +1,55 @@
 package controllers
 
 import (
-	"go-skeleton/app/services"
+	"go-skeleton/configs"
 	"go-skeleton/utils"
 
 	"github.com/gofiber/fiber/v2"
 )
 
-// HealthControllerStruct handles incoming HTTP requests for the health check endpoint.
-type HealthControllerStruct struct {
-	service services.HealthServiceInterface
-}
+// HealthController handles health check endpoints
+type HealthController struct{}
 
-// HealthController is the constructor for HealthController.
-// It initializes its own dependency (HealthService), making it self-contained.
-func HealthController() *HealthControllerStruct {
-	return &HealthControllerStruct{
-		service: services.HealthService(),
-	}
-}
-
-// Check is the handler function for the GET /api/health route.
-// It orchestrates the call to the service and formats the final JSON response.
-func (h *HealthControllerStruct) Check(c *fiber.Ctx) error {
-	dbStatus, err := h.service.CheckHealth()
-
-	// Prepare the data payload for the response.
-	healthData := map[string]string{
-		"service_status":  "Running",
-		"database_status": dbStatus,
-	}
-
-	// If the service returns an error, send a standardized error response.
+// Check is the handler function for the GET /api/health route
+func (h *HealthController) Check(c *fiber.Ctx) error {
+	// Get database instance
+	db := configs.GetDB()
+	
+	// Check database connection
+	sqlDB, err := db.DB()
 	if err != nil {
-		// Even in an error state, we provide context in the data payload.
-		healthData["database_status"] = "Not Connected"
 		return utils.ErrorResponse(
 			c,
-			fiber.StatusServiceUnavailable, // HTTP 503
-			"One or more services are unavailable",
-			healthData,
+			fiber.StatusServiceUnavailable,
+			"Database connection error",
+			map[string]string{
+				"service_status":  "Running",
+				"database_status": "Not Connected",
+			},
 		)
 	}
 
-	// If everything is healthy, send a standardized success response.
+	// Ping the database
+	if err := sqlDB.Ping(); err != nil {
+		return utils.ErrorResponse(
+			c,
+			fiber.StatusServiceUnavailable,
+			"Database ping failed",
+			map[string]string{
+				"service_status":  "Running",
+				"database_status": "Not Connected",
+			},
+		)
+	}
+
+	// If everything is healthy, send success response
 	return utils.SuccessResponse(
 		c,
-		fiber.StatusOK, // HTTP 200
+		fiber.StatusOK,
 		"All services are healthy",
-		healthData,
+		map[string]string{
+			"service_status":  "Running",
+			"database_status": "Connected",
+		},
 	)
 }

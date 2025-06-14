@@ -6,7 +6,7 @@ A lightweight and clean Go project skeleton that provides a solid foundation for
 
 - 🚀 Built with [Go Fiber](https://gofiber.io/) for high-performance HTTP routing
 - 📦 [GORM](https://gorm.io/) integration for database operations
-- 🏗️ Clean architecture folder structure
+- 🏗️ Simple and clean folder structure
 - 🔍 Health check endpoint included
 - 🛠️ Minimal dependencies for microservice development
 - 📝 Automatic database migrations with GORM
@@ -18,18 +18,16 @@ A lightweight and clean Go project skeleton that provides a solid foundation for
 ```
 .
 ├── app/                    # Application core
-│   ├── entities/          # Domain models/entities
-│   ├── http/             # HTTP layer (controllers, middlewares)
-│   ├── repositories/     # Data access layer
-│   └── services/        # Business logic layer
-├── configs/              # Configuration files
-│   ├── database.go      # Database connection factory
-│   ├── gorm.go         # GORM singleton and initialization
-│   └── migration.go     # Database migration configuration
-├── routes/              # Route definitions
-├── utils/               # Utility functions
-├── main.go             # Application entry point
-└── go.mod              # Go module file
+│   ├── models/             # Domain models
+│   └── http/               # HTTP layer (controllers, middlewares)
+├── configs/                # Configuration files
+│   ├── database.go         # Database connection factory
+│   ├── gorm.go             # GORM singleton and initialization
+│   └── migration.go        # Database migration configuration
+├── routes/                 # Route definitions
+├── utils/                  # Utility functions
+├── main.go                 # Application entry point
+└── go.mod                  # Go module file
 ```
 
 ## Getting Started
@@ -83,12 +81,13 @@ A lightweight and clean Go project skeleton that provides a solid foundation for
 
 ## Architecture
 
-This skeleton follows a clean architecture approach with the following layers:
+This skeleton follows a simple and clean architecture:
 
-- **Entities**: Core business objects
-- **Repositories**: Data access layer
-- **Services**: Business logic implementation
-- **HTTP Controllers**: Request handling and response formatting
+- **Models**: Core database models
+- **Controllers**: Request handling and business logic
+- **Routes**: API endpoint definitions
+- **Configs**: Application and database configuration
+- **Utils**: Shared utility functions
 
 ## Database Configuration
 
@@ -230,7 +229,7 @@ The migrations will run automatically when the application starts.
 
 - **Minimal Dependencies**: No unnecessary packages or features
 - **Microservice Ready**: Perfect for building microservices
-- **Clean Structure**: Clear separation of concerns
+- **Clean Structure**: Simple and straightforward organization
 - **Easy to Extend**: Add your own models and features as needed
 - **Database Flexibility**: Easy to switch between different database types
 - **Future-Proof**: Ready to integrate with any database system
@@ -238,9 +237,7 @@ The migrations will run automatically when the application starts.
 
 ## Adding New Features
 
-1. Create your entity (models/dtos) in `app/entities/`
+1. Create your entity (models) in `app/entities/`
 2. Register your models in `configs/migration.go` for database migration
-3. Add repository in `app/repositories/`
-4. Implement business logic in `app/services/`
-5. Create controller in `app/http/controllers/`
-6. Add routes in `routes/api.go`
+3. Create controller in `app/http/controllers/`
+4. Add routes in `routes/api.go`

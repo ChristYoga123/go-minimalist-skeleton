@@ -11,5 +11,5 @@ func SetupApiRoutes(app *fiber.App) {
 	api := app.Group("/api")
 
 	// Health check route
-	api.Get("/health", controllers.HealthController().Check)
+	api.Get("/health", (&controllers.HealthController{}).Check)
 }
