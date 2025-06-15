@@ -18,9 +18,6 @@ A lightweight and clean Go project skeleton that provides a solid foundation for
 ```
 .
 ├── app/                    # Application core
-│   ├── container/         # Dependency injection container
-│   │   ├── interfaces/    # Container interfaces
-│   │   └── container.go   # Container implementation
 │   ├── http/             # HTTP layer
 │   │   ├── controllers/  # Controllers
 │   │   │   ├── interfaces/  # Controller interfaces
@@ -29,9 +26,12 @@ A lightweight and clean Go project skeleton that provides a solid foundation for
 │   ├── repositories/     # Data access layer
 │   │   ├── interfaces/   # Repository interfaces
 │   │   └── healthRepositoryImpl.go
-│   └── services/        # Business logic layer
-│       ├── interfaces/  # Service interfaces
-│       └── healthServiceImpl.go
+│   ├── services/        # Business logic layer
+│   │   ├── interfaces/  # Service interfaces
+│   │   └── healthServiceImpl.go
+│   └── wire/           # Dependency injection
+│       ├── wire.go     # Wire providers
+│       └── wire_gen.go # Generated wire code
 ├── configs/              # Configuration files
 ├── routes/              # Route definitions
 ├── utils/               # Utility functions
@@ -92,7 +92,7 @@ A lightweight and clean Go project skeleton that provides a solid foundation for
 
 This skeleton follows a clean architecture with dependency injection:
 
-- **Container**: Dependency injection container for managing all dependencies
+- **Wire**: Dependency injection using Google Wire
 - **Controllers**: Request handling with interfaces
 - **Services**: Business logic layer with interfaces
 - **Repositories**: Data access layer with interfaces
@@ -103,7 +103,7 @@ This skeleton follows a clean architecture with dependency injection:
 The architecture implements:
 - Repository Pattern for data access
 - Service Layer for business logic
-- Dependency Injection for loose coupling
+- Dependency Injection using Wire
 - Interface-based design for better testing
 - Clean separation of concerns
 
@@ -255,7 +255,92 @@ The migrations will run automatically when the application starts.
 
 ## Adding New Features
 
-1. Create your entity (models) in `app/entities/`
-2. Register your models in `configs/migration.go` for database migration
-3. Create controller in `app/http/controllers/`
-4. Add routes in `routes/api.go`
+### 1. Create Feature Structure
+```
+app/
+├── http/
+│   ├── controllers/
+│   │   ├── interfaces/
+│   │   │   └── userControllerInterface.go
+│   │   └── userControllerImpl.go
+├── repositories/
+│   ├── interfaces/
+│   │   └── userRepositoryInterface.go
+│   └── userRepositoryImpl.go
+└── services/
+    ├── interfaces/
+    │   └── userServiceInterface.go
+    └── userServiceImpl.go
+```
+
+### 2. Register in Wire
+In `app/wire/wire.go`:
+```go
+// Add new provider set
+var userSet = wire.NewSet(
+    repositories.NewUserRepository,
+    services.NewUserService,
+    controllers.NewUserController,
+)
+
+// Update InitializeControllers
+func InitializeControllers() (
+    interfaces.HealthController,
+    interfaces.UserController,  // Add new controller
+    error,
+) {
+    wire.Build(
+        healthSet,
+        userSet,  // Add new provider set
+    )
+    return nil, nil, nil
+}
+```
+
+### 3. Add Routes
+In `routes/api.go`:
+```go
+func SetupApiRoutes(app *fiber.App) {
+    api := app.Group("/api")
+
+    // Initialize controllers
+    healthController, userController, err := wire.InitializeControllers()
+    if err != nil {
+        panic(err)
+    }
+
+    // Health routes
+    api.Get("/health", healthController.Check)
+
+    // User routes
+    userGroup := api.Group("/users")
+    userGroup.Post("/", userController.Create)
+    userGroup.Get("/:id", userController.GetByID)
+    userGroup.Get("/", userController.GetAll)
+    userGroup.Put("/:id", userController.Update)
+    userGroup.Delete("/:id", userController.Delete)
+}
+```
+
+### 4. Generate Wire Code
+After adding new feature, run:
+```bash
+wire ./app/wire
+```
+
+## Dependency Injection
+
+This project uses Google Wire for dependency injection. The benefits include:
+
+1. **Automatic Dependency Resolution**: Wire automatically resolves and injects dependencies
+2. **Compile-time Safety**: All dependencies are checked at compile time
+3. **Clean Architecture**: Clear separation of concerns
+4. **Easy Testing**: Dependencies can be easily mocked
+5. **Scalable**: Easy to add new features without changing existing code
+
+### How It Works
+
+1. **Provider Sets**: Each feature has its own provider set
+2. **Wire Build**: Dependencies are resolved at compile time
+3. **Interface-based**: All components are interface-based for better testing
+4. **Modular**: Features are isolated and can be added/removed easily
