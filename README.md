@@ -18,16 +18,25 @@ A lightweight and clean Go project skeleton that provides a solid foundation for
 ```
 .
 ├── app/                    # Application core
-│   ├── models/             # Domain models
-│   └── http/               # HTTP layer (controllers, middlewares)
-├── configs/                # Configuration files
-│   ├── database.go         # Database connection factory
-│   ├── gorm.go             # GORM singleton and initialization
-│   └── migration.go        # Database migration configuration
-├── routes/                 # Route definitions
-├── utils/                  # Utility functions
-├── main.go                 # Application entry point
-└── go.mod                  # Go module file
+│   ├── container/         # Dependency injection container
+│   │   ├── interfaces/    # Container interfaces
+│   │   └── container.go   # Container implementation
+│   ├── http/             # HTTP layer
+│   │   ├── controllers/  # Controllers
+│   │   │   ├── interfaces/  # Controller interfaces
+│   │   │   └── healthControllerImpl.go
+│   │   └── middlewares/  # HTTP middlewares
+│   ├── repositories/     # Data access layer
+│   │   ├── interfaces/   # Repository interfaces
+│   │   └── healthRepositoryImpl.go
+│   └── services/        # Business logic layer
+│       ├── interfaces/  # Service interfaces
+│       └── healthServiceImpl.go
+├── configs/              # Configuration files
+├── routes/              # Route definitions
+├── utils/               # Utility functions
+├── main.go             # Application entry point
+└── go.mod              # Go module file
 ```
 
 ## Getting Started
@@ -81,13 +90,22 @@ A lightweight and clean Go project skeleton that provides a solid foundation for
 
 ## Architecture
 
-This skeleton follows a simple and clean architecture:
+This skeleton follows a clean architecture with dependency injection:
 
-- **Models**: Core database models
-- **Controllers**: Request handling and business logic
+- **Container**: Dependency injection container for managing all dependencies
+- **Controllers**: Request handling with interfaces
+- **Services**: Business logic layer with interfaces
+- **Repositories**: Data access layer with interfaces
 - **Routes**: API endpoint definitions
 - **Configs**: Application and database configuration
 - **Utils**: Shared utility functions
+
+The architecture implements:
+- Repository Pattern for data access
+- Service Layer for business logic
+- Dependency Injection for loose coupling
+- Interface-based design for better testing
+- Clean separation of concerns
 
 ## Database Configuration
 
