@@ -7,6 +7,7 @@
 package wire
 
 import (
+	"github.com/google/wire"
 	"go-skeleton/app/http/controllers"
 	"go-skeleton/app/http/controllers/interfaces"
 	"go-skeleton/app/repositories"
@@ -15,10 +16,14 @@ import (
 
 // Injectors from wire.go:
 
-// InitializeControllers initializes all controllers with their dependencies
+// Add new interfaces to return value as needed
 func InitializeControllers() (interfaces.HealthController, error) {
 	healthRepository := repositories.NewHealthRepository()
 	healthService := services.NewHealthService(healthRepository)
 	healthController := controllers.NewHealthController(healthService)
 	return healthController, nil
 }
+
+// wire.go:
+
+var healthSet = wire.NewSet(repositories.NewHealthRepository, services.NewHealthService, controllers.NewHealthController)
